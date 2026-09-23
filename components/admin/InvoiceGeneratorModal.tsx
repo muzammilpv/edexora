@@ -75,14 +75,36 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
     window.print();
   };
 
-  const handleDownload = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1000;
-    canvas.height = 920;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  const handleDownload = async () => {
+    const element = document.getElementById('printable-invoice');
+    if (!element) return;
 
-    const renderCanvas = (logoImg?: HTMLImageElement) => {
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(element, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#FFFFFF',
+        logging: false,
+      });
+
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `EDEXORA_Official_Invoice_${studentName.replace(/\s+/g, '_')}_${receiptNumber}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('html2canvas export error, falling back to custom canvas', err);
+      // Fallback manual canvas rendering
+      const canvas = document.createElement('canvas');
+      canvas.width = 1000;
+      canvas.height = 920;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
       // 1. Background Paper
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -96,39 +118,18 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.fillStyle = '#0F172A';
       ctx.fillRect(24, 24, canvas.width - 48, 140);
 
-      // Yellow accent line at bottom of header banner
       ctx.fillStyle = '#FFD200';
       ctx.fillRect(24, 160, canvas.width - 48, 8);
 
-      // Logo rendering (Image if loaded, else fallback badge)
-      if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
-        // Draw rounded container for logo
-        ctx.save();
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(50, 44, 100, 100, 20);
-        } else {
-          ctx.arc(100, 94, 50, 0, Math.PI * 2);
-        }
-        ctx.clip();
-        ctx.drawImage(logoImg, 50, 44, 100, 100);
-        ctx.restore();
+      // Logo rendering
+      ctx.fillStyle = '#FFD200';
+      ctx.beginPath();
+      ctx.arc(100, 94, 45, 0, Math.PI * 2);
+      ctx.fill();
 
-        // Border around logo
-        ctx.strokeStyle = '#FFD200';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(50, 44, 100, 100);
-      } else {
-        // Fallback Logo Badge
-        ctx.fillStyle = '#FFD200';
-        ctx.beginPath();
-        ctx.arc(100, 94, 45, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#0F172A';
-        ctx.font = 'black 48px sans-serif';
-        ctx.fillText('E', 85, 110);
-      }
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'black 48px sans-serif';
+      ctx.fillText('E', 85, 110);
 
       // Brand Title & Description
       ctx.fillStyle = '#FFFFFF';
@@ -143,7 +144,7 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.fillStyle = '#94A3B8';
       ctx.fillText('Class 1 to 12 • CBSE & Kerala State Board', 170, 128);
 
-      // Paid Badge (Top Right)
+      // Paid Badge
       ctx.fillStyle = '#059669';
       if (ctx.roundRect) {
         ctx.roundRect(670, 45, 275, 40, 20);
@@ -163,7 +164,7 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.fillStyle = '#CBD5E1';
       ctx.fillText(`Date: ${receiptDate}`, 670, 134);
 
-      // 3. Student & Payment Details Box
+      // 3. Student Details Box
       ctx.fillStyle = '#F8FAFC';
       if (ctx.roundRect) {
         ctx.roundRect(50, 195, canvas.width - 100, 150, 16);
@@ -175,7 +176,6 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.lineWidth = 2;
       ctx.strokeRect(50, 195, canvas.width - 100, 150);
 
-      // Student Section
       ctx.fillStyle = '#64748B';
       ctx.font = 'bold 11px sans-serif';
       ctx.fillText('STUDENT NAME & PROFILE:', 75, 225);
@@ -192,7 +192,7 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.fillStyle = '#94A3B8';
       ctx.fillText(`Student ID: EDX-STD-${Math.floor(1000 + Math.random() * 9000)}`, 75, 318);
 
-      // Payment Section (Right Column)
+      // Payment Details
       ctx.fillStyle = '#64748B';
       ctx.font = 'bold 11px sans-serif';
       ctx.fillText('PAYMENT DETAILS:', 600, 225);
@@ -209,7 +209,7 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.fillStyle = '#64748B';
       ctx.fillText('Issued by: EDEXORA Accounts Team', 600, 318);
 
-      // 4. Itemized Fee Table Header
+      // 4. Table Header
       ctx.fillStyle = '#0F172A';
       if (ctx.roundRect) {
         ctx.roundRect(50, 375, canvas.width - 100, 45, 10);
@@ -224,7 +224,7 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.fillText('QTY / CLASSES', 520, 403);
       ctx.fillText('AMOUNT (₹)', 800, 403);
 
-      // Table Row Content
+      // Table Content
       ctx.fillStyle = '#0F172A';
       ctx.font = 'bold 18px sans-serif';
       ctx.fillText(description, 75, 465);
@@ -240,15 +240,7 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.font = 'black 24px sans-serif';
       ctx.fillText(`₹${amount.toLocaleString()}`, 800, 465);
 
-      // Divider Line
-      ctx.strokeStyle = '#E2E8F0';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(50, 530);
-      ctx.lineTo(canvas.width - 50, 530);
-      ctx.stroke();
-
-      // 5. Total Received Highlight Box
+      // Total Box
       ctx.fillStyle = '#0F172A';
       if (ctx.roundRect) {
         ctx.roundRect(50, 560, canvas.width - 100, 90, 20);
@@ -269,7 +261,7 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.font = 'black 38px sans-serif';
       ctx.fillText(`₹${amount.toLocaleString()}`, 770, 618);
 
-      // 6. Footer Verification & Signature
+      // Signature & Stamp
       ctx.strokeStyle = '#059669';
       ctx.lineWidth = 2.5;
       if (ctx.roundRect) {
@@ -291,12 +283,6 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.fillStyle = '#64748B';
       ctx.fillText('Authorized Signature & Official Stamp', 650, 722);
 
-      // Bottom footer tag
-      ctx.fillStyle = '#94A3B8';
-      ctx.font = '12px sans-serif';
-      ctx.fillText('EDEXORA Learning App • www.edexora.com • Support: +91 98470 00000', 280, 875);
-
-      // Trigger Download
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
@@ -304,18 +290,7 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    };
-
-    // Load real logo image onto canvas
-    const img = new window.Image();
-    img.crossOrigin = 'anonymous';
-    img.src = '/edexora-logo.jpg';
-    img.onload = () => {
-      renderCanvas(img);
-    };
-    img.onerror = () => {
-      renderCanvas();
-    };
+    }
   };
 
   const handleReset = () => {

@@ -64,13 +64,51 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const handleGenerateInvoice = (e: React.FormEvent) => {
     e.preventDefault();
     if (!studentName.trim()) return;
-
-    // Create a new receipt number if needed
     setIsGenerated(true);
   };
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleSavePdf = () => {
+    window.print();
+  };
+
+  const handleDownload = () => {
+    const receiptText = `
+======================================================
+         EDEXORA ONLINE TUITION ACADEMY
+      OFFICIAL STUDENT FEE RECEIPT & INVOICE
+======================================================
+Invoice No   : ${receiptNumber}
+Date         : ${receiptDate}
+Status       : PAID & VERIFIED
+
+STUDENT DETAILS:
+Name         : ${studentName}
+Class / Board: ${classLevel}
+
+FEE DETAILS:
+Description  : ${description}
+Payment Mode : ${paymentMethod}
+Amount Paid  : ₹${amount}
+
+======================================================
+Authorized by: EDEXORA Accounts & Finance Team
+Computer Generated Official Receipt
+======================================================
+    `;
+
+    const blob = new Blob([receiptText.trim()], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `EDEXORA_Fee_Receipt_${studentName.replace(/\s+/g, '_')}_${receiptNumber}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleReset = () => {
@@ -249,7 +287,7 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
                         Online Tuition & Learning Academy
                       </p>
                       <p className="text-[10px] text-slate-500">
-                        Class 1 to 10 • CBSE & Kerala State Board
+                        Class 1 to 12 • CBSE & Kerala State Board
                       </p>
                     </div>
                   </div>
@@ -332,23 +370,50 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              {/* Action Buttons for Admin */}
-              <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="w-full sm:w-auto px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs transition flex items-center justify-center gap-2"
-                >
-                  <PlusCircle className="w-4 h-4" /> Create Another Bill
-                </button>
+              {/* 3 Separate Distinct Small Box Action Buttons */}
+              <div className="space-y-4">
+                <div className="text-[11px] font-extrabold uppercase text-slate-500 tracking-wider text-center">
+                  Export & Share Options:
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Box 1: Print */}
+                  <button
+                    type="button"
+                    onClick={handlePrint}
+                    className="p-3.5 bg-slate-950 hover:bg-slate-900 text-white font-black rounded-2xl text-xs transition flex flex-col items-center justify-center gap-1.5 border border-slate-800 shadow-sm active:scale-95 group"
+                  >
+                    <Printer className="w-5 h-5 text-edexora-yellow group-hover:scale-110 transition" />
+                    <span>Print</span>
+                  </button>
+
+                  {/* Box 2: Save as PDF */}
+                  <button
+                    type="button"
+                    onClick={handleSavePdf}
+                    className="p-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl text-xs transition flex flex-col items-center justify-center gap-1.5 border border-emerald-500 shadow-sm active:scale-95 group"
+                  >
+                    <FileText className="w-5 h-5 group-hover:scale-110 transition" />
+                    <span>Save as PDF</span>
+                  </button>
+
+                  {/* Box 3: Download */}
+                  <button
+                    type="button"
+                    onClick={handleDownload}
+                    className="p-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl text-xs transition flex flex-col items-center justify-center gap-1.5 border border-blue-500 shadow-sm active:scale-95 group"
+                  >
+                    <Download className="w-5 h-5 group-hover:scale-110 transition" />
+                    <span>Download</span>
+                  </button>
+                </div>
 
                 <button
                   type="button"
-                  onClick={handlePrint}
-                  className="w-full sm:w-auto px-6 py-2.5 bg-slate-950 hover:bg-slate-800 text-white font-black rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-card"
+                  onClick={handleReset}
+                  className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs transition flex items-center justify-center gap-2"
                 >
-                  <Printer className="w-4 h-4 text-edexora-yellow" />
-                  <span>Print Receipt / Save as PDF</span>
+                  <PlusCircle className="w-4 h-4" /> Create Another Fee Bill
                 </button>
               </div>
             </div>

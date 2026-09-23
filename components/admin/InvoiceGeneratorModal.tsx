@@ -77,240 +77,238 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const handleDownload = () => {
     const canvas = document.createElement('canvas');
-    canvas.width = 1200;
-    canvas.height = 1100;
+    canvas.width = 1000;
+    canvas.height = 700;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // 1. Pure White Background Paper (Ensures zero black overlay)
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const renderExactInvoice = (logoImg?: HTMLImageElement) => {
+      // 1. Pure White Background Paper
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Clean Outer Border Frame
-    ctx.strokeStyle = '#0F172A';
-    ctx.lineWidth = 10;
-    ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+      // Outer Rounded Border Frame
+      ctx.strokeStyle = '#0F172A';
+      ctx.lineWidth = 3;
+      if (ctx.roundRect) {
+        ctx.roundRect(15, 15, canvas.width - 30, canvas.height - 30, 24);
+        ctx.stroke();
+      } else {
+        ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+      }
 
-    // 2. BRIGHT EDEXORA YELLOW TOP BANNER (NO DARK/BLACK BOX!)
-    ctx.fillStyle = '#FFD200';
-    if (ctx.roundRect) {
-      ctx.roundRect(35, 35, canvas.width - 70, 160, 16);
-      ctx.fill();
-    } else {
-      ctx.fillRect(35, 35, canvas.width - 70, 160);
-    }
-    ctx.strokeStyle = '#0F172A';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(35, 35, canvas.width - 70, 160);
+      // 2. Header Section
+      // Yellow Logo Square
+      ctx.fillStyle = '#FFD200';
+      if (ctx.roundRect) {
+        ctx.roundRect(50, 45, 68, 68, 18);
+        ctx.fill();
+      } else {
+        ctx.fillRect(50, 45, 68, 68);
+      }
+      ctx.strokeStyle = '#0F172A';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(50, 45, 68, 68);
 
-    // EDEXORA LOGO EMBLEM BADGE (Guaranteed 100% Visible & Sharp Logo)
-    ctx.fillStyle = '#0F172A';
-    ctx.beginPath();
-    ctx.arc(115, 115, 55, 0, Math.PI * 2);
-    ctx.fill();
+      if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+        ctx.save();
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(52, 47, 64, 64, 16);
+          ctx.clip();
+        }
+        ctx.drawImage(logoImg, 52, 47, 64, 64);
+        ctx.restore();
+      } else {
+        // Fallback Logo 'E'
+        ctx.fillStyle = '#0F172A';
+        ctx.font = 'black 36px sans-serif';
+        ctx.fillText('E', 72, 92);
+      }
 
-    ctx.fillStyle = '#FFD200';
-    ctx.beginPath();
-    ctx.arc(115, 115, 48, 0, Math.PI * 2);
-    ctx.fill();
+      // Edexora Header Text
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'black 34px sans-serif';
+      ctx.fillText('EDEXORA', 135, 78);
 
-    // Graduation Cap Icon on Logo Badge
-    ctx.fillStyle = '#0F172A';
-    ctx.beginPath();
-    ctx.moveTo(115, 85);
-    ctx.lineTo(145, 100);
-    ctx.lineTo(115, 115);
-    ctx.lineTo(85, 100);
-    ctx.closePath();
-    ctx.fill();
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillStyle = '#475569';
+      ctx.fillText('ONLINE TUITION & LEARNING ACADEMY', 135, 96);
 
-    ctx.fillRect(98, 112, 34, 18);
+      ctx.font = '11px sans-serif';
+      ctx.fillStyle = '#64748B';
+      ctx.fillText('Class 1 to 12 • CBSE & Kerala State Board', 135, 114);
 
-    ctx.font = 'black 22px sans-serif';
-    ctx.fillText('E', 108, 148);
+      // Paid Badge (Top Right)
+      ctx.fillStyle = '#059669';
+      if (ctx.roundRect) {
+        ctx.roundRect(650, 45, 300, 36, 18);
+        ctx.fill();
+      } else {
+        ctx.fillRect(650, 45, 300, 36);
+      }
 
-    // Edexora Header Text
-    ctx.fillStyle = '#0F172A';
-    ctx.font = 'black 48px sans-serif';
-    ctx.fillText('EDEXORA', 195, 98);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'black 12px sans-serif';
+      ctx.fillText('OFFICIAL FEE RECEIPT • PAID', 685, 68);
 
-    ctx.font = 'bold 16px sans-serif';
-    ctx.fillStyle = '#1E293B';
-    ctx.fillText('ONLINE TUITION & LEARNING ACADEMY', 195, 126);
+      // Invoice Metadata
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'bold 15px monospace';
+      ctx.fillText(`Invoice No: ${receiptNumber}`, 650, 106);
+      ctx.font = '13px sans-serif';
+      ctx.fillStyle = '#475569';
+      ctx.fillText(`Date: ${receiptDate}`, 785, 126);
 
-    ctx.font = '14px sans-serif';
-    ctx.fillStyle = '#334155';
-    ctx.fillText('Class 1 to 12 • CBSE & Kerala State Board', 195, 150);
-
-    // Paid Green Badge (Top Right)
-    ctx.fillStyle = '#059669';
-    if (ctx.roundRect) {
-      ctx.roundRect(780, 50, 365, 48, 24);
-      ctx.fill();
-    } else {
-      ctx.fillRect(780, 50, 365, 48);
-    }
-
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 16px sans-serif';
-    ctx.fillText('✓ OFFICIAL FEE RECEIPT • PAID', 805, 80);
-
-    // Invoice Metadata (On Yellow Banner)
-    ctx.fillStyle = '#0F172A';
-    ctx.font = 'bold 18px monospace';
-    ctx.fillText(`Invoice No: ${receiptNumber}`, 780, 130);
-    ctx.font = '15px sans-serif';
-    ctx.fillStyle = '#334155';
-    ctx.fillText(`Date: ${receiptDate}`, 780, 156);
-
-    // 3. STUDENT PROFILE DETAILS CARD (LIGHT AMBER #FFFBEB - ZERO BLACK BOX!)
-    ctx.fillStyle = '#FFFBEB';
-    if (ctx.roundRect) {
-      ctx.roundRect(50, 225, canvas.width - 100, 195, 20);
-      ctx.fill();
-    } else {
-      ctx.fillRect(50, 225, canvas.width - 100, 195);
-    }
-    ctx.strokeStyle = '#FCD34D';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(50, 225, canvas.width - 100, 195);
-
-    // Left Column: Student Details
-    ctx.fillStyle = '#B45309';
-    ctx.font = 'bold 14px sans-serif';
-    ctx.fillText('STUDENT NAME & PROFILE:', 80, 265);
-
-    // Student Name (LARGE, BOLD, DARK #0F172A TEXT)
-    ctx.fillStyle = '#0F172A';
-    ctx.font = 'black 34px sans-serif';
-    ctx.fillText(studentName, 80, 312);
-
-    ctx.font = 'bold 20px sans-serif';
-    ctx.fillStyle = '#1E293B';
-    ctx.fillText(classLevel, 80, 352);
-
-    ctx.font = '15px sans-serif';
-    ctx.fillStyle = '#64748B';
-    ctx.fillText(`Student ID: EDX-STD-${Math.floor(1000 + Math.random() * 9000)}`, 80, 388);
-
-    // Right Column: Payment Details
-    ctx.fillStyle = '#B45309';
-    ctx.font = 'bold 14px sans-serif';
-    ctx.fillText('PAYMENT DETAILS:', 720, 265);
-
-    ctx.fillStyle = '#0F172A';
-    ctx.font = 'bold 22px sans-serif';
-    ctx.fillText(`Mode: ${paymentMethod}`, 720, 312);
-
-    ctx.fillStyle = '#059669';
-    ctx.font = 'bold 20px sans-serif';
-    ctx.fillText('Status: Verified & Completed', 720, 352);
-
-    ctx.font = '15px sans-serif';
-    ctx.fillStyle = '#64748B';
-    ctx.fillText('Issued by: EDEXORA Accounts Team', 720, 388);
-
-    // 4. Itemized Table Header Bar (LIGHT SLATE ACCENT #F1F5F9)
-    ctx.fillStyle = '#F1F5F9';
-    if (ctx.roundRect) {
-      ctx.roundRect(50, 450, canvas.width - 100, 55, 12);
-      ctx.fill();
-    } else {
-      ctx.fillRect(50, 450, canvas.width - 100, 55);
-    }
-    ctx.strokeStyle = '#CBD5E1';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(50, 450, canvas.width - 100, 55);
-
-    ctx.fillStyle = '#0F172A';
-    ctx.font = 'bold 16px sans-serif';
-    ctx.fillText('FEE DESCRIPTION', 80, 485);
-    ctx.fillText('QTY / CLASSES', 620, 485);
-    ctx.fillText('AMOUNT (₹)', 980, 485);
-
-    // Table Content Row
-    ctx.fillStyle = '#0F172A';
-    ctx.font = 'bold 24px sans-serif';
-    ctx.fillText(description, 80, 555);
-
-    ctx.font = '15px sans-serif';
-    ctx.fillStyle = '#64748B';
-    ctx.fillText('Access to full video lectures, study materials & live classes', 80, 590);
-
-    ctx.font = 'bold 19px sans-serif';
-    ctx.fillStyle = '#0F172A';
-    ctx.fillText('10 Classes Pack', 620, 555);
-
-    ctx.font = 'black 34px sans-serif';
-    ctx.fillText(`₹${amount.toLocaleString()}`, 980, 555);
-
-    // Line Separator
-    ctx.strokeStyle = '#E2E8F0';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(50, 635);
-    ctx.lineTo(canvas.width - 50, 635);
-    ctx.stroke();
-
-    // 5. TOTAL AMOUNT RECEIVED BOX (BRIGHT EDEXORA YELLOW #FFD200 - NO BLACK BOX!)
-    ctx.fillStyle = '#FFD200';
-    if (ctx.roundRect) {
-      ctx.roundRect(50, 670, canvas.width - 100, 120, 24);
-      ctx.fill();
-    } else {
-      ctx.fillRect(50, 670, canvas.width - 100, 120);
-    }
-    ctx.strokeStyle = '#0F172A';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(50, 670, canvas.width - 100, 120);
-
-    ctx.fillStyle = '#0F172A';
-    ctx.font = 'black 22px sans-serif';
-    ctx.fillText('TOTAL AMOUNT RECEIVED', 85, 722);
-
-    ctx.font = '15px sans-serif';
-    ctx.fillStyle = '#334155';
-    ctx.fillText('Inclusive of all learning materials & taxes', 85, 755);
-
-    ctx.fillStyle = '#0F172A';
-    ctx.font = 'black 54px sans-serif';
-    ctx.fillText(`₹${amount.toLocaleString()}`, 920, 750);
-
-    // 6. Verification Stamp & Signature
-    ctx.strokeStyle = '#059669';
-    ctx.lineWidth = 3;
-    if (ctx.roundRect) {
-      ctx.roundRect(50, 825, 450, 72, 16);
+      // Line Separator under header
+      ctx.strokeStyle = '#0F172A';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(50, 145);
+      ctx.lineTo(canvas.width - 50, 145);
       ctx.stroke();
-    } else {
-      ctx.strokeRect(50, 825, 450, 72);
-    }
 
-    ctx.fillStyle = '#059669';
-    ctx.font = 'bold 16px sans-serif';
-    ctx.fillText('✓ VALID COMPUTER GENERATED RECEIPT', 75, 868);
+      // 3. Student Details Box (Light Slate #F8FAFC)
+      ctx.fillStyle = '#F8FAFC';
+      if (ctx.roundRect) {
+        ctx.roundRect(50, 170, canvas.width - 100, 135, 20);
+        ctx.fill();
+      } else {
+        ctx.fillRect(50, 170, canvas.width - 100, 135);
+      }
+      ctx.strokeStyle = '#E2E8F0';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(50, 170, canvas.width - 100, 135);
 
-    ctx.fillStyle = '#0F172A';
-    ctx.font = 'black 22px sans-serif';
-    ctx.fillText('EDEXORA Tuition Academy', 760, 855);
+      // Left Column
+      ctx.fillStyle = '#64748B';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('STUDENT NAME & PROFILE:', 75, 198);
 
-    ctx.font = '15px sans-serif';
-    ctx.fillStyle = '#64748B';
-    ctx.fillText('Authorized Signature & Official Stamp', 760, 882);
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'black 22px sans-serif';
+      ctx.fillText(studentName, 75, 230);
 
-    // Bottom Tag
-    ctx.fillStyle = '#94A3B8';
-    ctx.font = '14px sans-serif';
-    ctx.fillText('EDEXORA Learning App • Official Fee Receipt • www.edexora.com', 360, 1050);
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillStyle = '#475569';
+      ctx.fillText(classLevel, 75, 254);
 
-    // Immediate PNG download
-    const dataUrl = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.href = dataUrl;
-    link.download = `EDEXORA_Official_Invoice_${studentName.replace(/\s+/g, '_')}_${receiptNumber}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      ctx.font = '12px sans-serif';
+      ctx.fillStyle = '#64748B';
+      ctx.fillText(`ID: EDX-STD-${Math.floor(1000 + Math.random() * 9000)}`, 75, 276);
+
+      // Right Column
+      ctx.fillStyle = '#64748B';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('PAYMENT DETAILS:', 620, 198);
+
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText(`Mode: ${paymentMethod}`, 620, 230);
+
+      ctx.fillStyle = '#047857';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillText('Status: Completed & Verified', 620, 254);
+
+      ctx.font = '12px sans-serif';
+      ctx.fillStyle = '#64748B';
+      ctx.fillText('Issued by: EDEXORA Accounts', 620, 276);
+
+      // 4. Itemized Table Section
+      // Table Header Text
+      ctx.fillStyle = '#64748B';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('DESCRIPTION', 50, 335);
+      ctx.fillText('QTY / CLASSES', 520, 335);
+      ctx.fillText('AMOUNT (₹)', 830, 335);
+
+      // Header Underline
+      ctx.strokeStyle = '#0F172A';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(50, 345);
+      ctx.lineTo(canvas.width - 50, 345);
+      ctx.stroke();
+
+      // Row Content
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText(description, 50, 380);
+
+      ctx.font = '12px sans-serif';
+      ctx.fillStyle = '#64748B';
+      ctx.fillText('Access to video lectures, notes & live classes', 50, 402);
+
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillStyle = '#0F172A';
+      ctx.fillText('10 Classes Pack', 520, 380);
+
+      ctx.font = 'black 24px sans-serif';
+      ctx.fillText(`₹${amount.toLocaleString()}`, 830, 380);
+
+      // 5. Total Received Box (Dark Slate #0F172A / slate-950)
+      ctx.fillStyle = '#0F172A';
+      if (ctx.roundRect) {
+        ctx.roundRect(50, 440, canvas.width - 100, 85, 20);
+        ctx.fill();
+      } else {
+        ctx.fillRect(50, 440, canvas.width - 100, 85);
+      }
+
+      ctx.fillStyle = '#FFD200';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('TOTAL AMOUNT RECEIVED', 75, 475);
+
+      ctx.font = '12px sans-serif';
+      ctx.fillStyle = '#CBD5E1';
+      ctx.fillText('Inclusive of all learning materials', 75, 498);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'black 34px sans-serif';
+      ctx.fillText(`₹${amount.toLocaleString()}`, 820, 492);
+
+      // 6. Footer Section
+      ctx.strokeStyle = '#E2E8F0';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(50, 555);
+      ctx.lineTo(canvas.width - 50, 555);
+      ctx.stroke();
+
+      // Verification Left
+      ctx.fillStyle = '#047857';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('✓  Valid Computer Generated Official Receipt', 50, 590);
+
+      // Signature Right
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillText('EDEXORA Tuition Academy', 680, 585);
+
+      ctx.font = '12px sans-serif';
+      ctx.fillStyle = '#64748B';
+      ctx.fillText('Authorized Signature', 680, 605);
+
+      // Trigger Download
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `EDEXORA_Official_Invoice_${studentName.replace(/\s+/g, '_')}_${receiptNumber}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    // Load real logo image onto canvas
+    const img = new window.Image();
+    img.crossOrigin = 'anonymous';
+    img.src = '/edexora-logo.jpg';
+    img.onload = () => {
+      renderExactInvoice(img);
+    };
+    img.onerror = () => {
+      renderExactInvoice();
+    };
   };
 
   const handleReset = () => {

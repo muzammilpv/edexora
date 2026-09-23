@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { AppProvider } from '../components/providers/AppProvider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -9,15 +10,20 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'InspireGO — Premium International Travel & Spiritual Experiences',
-  description: 'Experience world-class scrollytelling travel with InspireGO. Specializing in luxury international holidays, VIP Umrah pilgrimages, Jordan, Palestine, and Middle Eastern cultural escapes.',
-  keywords: ['InspireGO', 'Luxury Travel', 'VIP Umrah', 'Jordan Tours', 'Palestine Pilgrimage', 'Middle East Travel', 'Bespoke Holidays'],
-  authors: [{ name: 'InspireGO Creative Design' }],
-  openGraph: {
-    title: 'InspireGO — Premium International Travel Experience',
-    description: 'Go beyond the ordinary. Discover cinematic travel experiences curated for the discerning international traveler.',
-    type: 'website',
-  }
+  title: 'EDEXORA — Modern Online Tuition Platform (Class 1 to 10)',
+  description: 'Online tuition and learning platform for students from Class 1 to Class 10 covering Kerala State and CBSE curricula with video learning, live classes, quizzes, and package unlocking.',
+  keywords: [
+    'Edexora',
+    'Online Tuition',
+    'Class 1 to 10',
+    'CBSE Tuition',
+    'Kerala State Tuition',
+    'Video Learning',
+    'Live Classes',
+  ],
+  icons: {
+    icon: '/edexora-logo.jpg',
+  },
 };
 
 export default function RootLayout({
@@ -26,9 +32,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} dark scroll-smooth`}>
-      <body className="bg-[#050505] text-[#rgba(255,255,255,0.62)] antialiased selection:bg-[#D4AF37]/30 selection:text-white">
-        {children}
+    <html lang="en" className={`${inter.variable}`}>
+      <body className="bg-slate-50 text-slate-900 antialiased selection:bg-[#FFD200] selection:text-slate-950">
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );

@@ -1,18 +1,35 @@
-# travelling
+# EDEXORA — Online Tuition & Learning Platform (Class 1 to 10)
 
-## InspireGO — Premium Scroll-Driven Travel Experience
+EDEXORA is a functional, modern responsive online tuition and learning web application built for students from Class 1 to Class 10 covering Kerala State and CBSE Board curricula.
 
-An Awwwards / Apple-level digital travel experience for an international travel agency built with Next.js 14 App Router, TypeScript, Framer Motion, HTML5 Canvas, and Tailwind CSS.
+## 🚀 Key Features
 
-### Features
-- **300-Frame Canvas Scrollytelling**: 1:1 mouse scroll-driven frame-by-frame airplane-to-destination flight journey.
-- **Scroll-Gated Storytelling**: Guaranteed 100% full animation experience before seamlessly transitioning to details below with zero black gaps.
-- **Curated Destinations**: Highlighting VIP Umrah Pilgrimage (Makkah & Madinah Kaaba), Sacred Palestine (Al-Aqsa Mosque Drone Shot), Newlywed Romantic Honeymoon Escapes, Jordan & Petra, Dubai Luxury, and Ottoman Istanbul.
-- **Interactive Trip Planner Modal**: Bespoke concierge trip customizer for instant itinerary requests.
+- **Mobile-First Responsive UI**: Styled with official Edexora Yellow branding and sleek dark modes.
+- **Role Security Passwords (PIN Auth)**:
+  - 🎓 **Student Portal** (PIN protected)
+  - 👨‍🏫 **Teacher Educator Portal** (PIN protected)
+  - 🛡️ **Super Admin Portal** (PIN protected)
+- **Course & Video Learning Engine**: Stream video lectures with exact timestamp watch progress resume and downloadable class notes.
+- **Live Online Classes**: Interactive live streaming hub with real-time chat and raise-hand doubt clearance.
+- **Quiz & Assessment Engine**: Automated practice tests with instant scoring and detailed explanation review keys.
+- **Admin Fee Invoice & Bill Generator**: Generate official student fee receipts with instant print and PDF save capability (`window.print()`).
+- **Platform Analytics & Finance**: Transaction logs and student/teacher management.
 
-### Tech Stack
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- HTML5 Canvas
+## 🛠️ Technology Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **UI & Styling**: React 18, Tailwind CSS, Lucide Icons
+- **Language**: TypeScript
+- **State Management**: React Context & Store
+
+## 💻 Getting Started Locally
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.

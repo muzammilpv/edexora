@@ -8,49 +8,31 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '#050505',
-        surface: '#0A0A0A',
-        'surface-elevated': '#121212',
-        'surface-glass': 'rgba(18, 18, 18, 0.65)',
-        gold: {
-          400: '#F3E5AB',
-          500: '#E5C158',
-          600: '#D4AF37',
-          700: '#B89428',
-          800: '#8C6F1B',
+        edexora: {
+          yellow: '#FFD200',
+          'yellow-hover': '#ECC200',
+          'yellow-light': '#FFF9DB',
+          dark: '#111827',
+          black: '#0F172A',
+          card: '#FFFFFF',
+          bg: '#F8FAFC',
+          muted: '#64748B',
+          border: '#E2E8F0',
         },
-        sand: {
-          300: '#F5E6D3',
-          400: '#E6CBA8',
-          500: '#C8A87C',
-          600: '#A28359',
-        },
+      },
+      borderRadius: {
+        card: '16px',
+        pill: '9999px',
+      },
+      boxShadow: {
+        subtle: '0 2px 10px rgba(0, 0, 0, 0.04)',
+        card: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+        highlight: '0 8px 30px -4px rgba(255, 210, 0, 0.25)',
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'Inter', 'SF Pro Display', '-apple-system', 'sans-serif'],
       },
-      letterSpacing: {
-        tighter: '-0.05em',
-        tight: '-0.03em',
-        editorial: '-0.02em',
-        widest: '0.2em',
-        mega: '0.35em',
-      },
-      animation: {
-        'pulse-subtle': 'pulseSubtle 4s ease-in-out infinite',
-        'float': 'float 8s ease-in-out infinite',
-      },
-      keyframes: {
-        pulseSubtle: {
-          '0%, 100%': { opacity: '0.4' },
-          '50%': { opacity: '0.8' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' },
-        }
-      }
     },
   },
   plugins: [],
-}
+};

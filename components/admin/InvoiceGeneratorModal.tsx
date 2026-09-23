@@ -75,6 +75,9 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
     window.print();
   };
 
+  const validStudentName = studentName.trim() || 'Muzammil PV';
+  const validClassLevel = classLevel.trim() || 'Class 8 (CBSE)';
+
   const handleDownload = () => {
     const canvas = document.createElement('canvas');
     canvas.width = 1000;
@@ -187,11 +190,11 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
       ctx.fillStyle = '#0F172A';
       ctx.font = 'black 22px sans-serif';
-      ctx.fillText(studentName, 75, 230);
+      ctx.fillText(validStudentName, 75, 230);
 
       ctx.font = 'bold 15px sans-serif';
       ctx.fillStyle = '#475569';
-      ctx.fillText(classLevel, 75, 254);
+      ctx.fillText(validClassLevel, 75, 254);
 
       ctx.font = '12px sans-serif';
       ctx.fillStyle = '#64748B';
@@ -509,8 +512,8 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
                     <span className="text-[10px] font-bold uppercase text-slate-500 block mb-0.5">
                       Student Name & Profile:
                     </span>
-                    <div className="text-base font-black text-slate-950">{studentName}</div>
-                    <div className="text-slate-600 font-semibold">{classLevel}</div>
+                    <div className="text-base font-black text-slate-950">{validStudentName}</div>
+                    <div className="text-slate-600 font-semibold">{validClassLevel}</div>
                     <div className="text-slate-500 text-[11px]">ID: EDX-STD-{Math.floor(1000 + Math.random() * 9000)}</div>
                   </div>
 

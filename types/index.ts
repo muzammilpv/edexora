@@ -44,7 +44,8 @@ export interface Subject {
   code: string;
   classLevel: number;
   curriculum: CurriculumType;
-  iconName: string;
+  iconName?: string;
+  icon?: string;
   color: string;
   totalLessons: number;
   description: string;

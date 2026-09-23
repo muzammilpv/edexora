@@ -162,21 +162,21 @@ export const PinAuthModal: React.FC = () => {
             </div>
           )}
 
-          {/* Student Class Level Selector (Classes 1 to 10) */}
+          {/* Student Class Level Selector (Classes 1 to 12) */}
           {selectedRole === 'student' && (
             <div className="space-y-2 bg-amber-50/70 p-3.5 rounded-2xl border border-amber-200">
               <div className="flex items-center justify-between text-xs">
                 <label className="font-extrabold text-slate-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
                   <BookOpen className="w-4 h-4 text-slate-950" />
-                  Select Your Class (Class 1 to 10):
+                  Select Your Class (Class 1 to 12):
                 </label>
                 <span className="text-xs font-black text-slate-950 bg-edexora-yellow px-2.5 py-0.5 rounded-full shadow-sm">
                   Class {selectedClassLevel}
                 </span>
               </div>
 
-              <div className="grid grid-cols-5 gap-1.5 pt-1">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => (
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5 pt-1">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((lvl) => (
                   <button
                     key={lvl}
                     type="button"

@@ -51,8 +51,23 @@ export type AppView =
   | 'admin-reports'
   | 'settings';
 
+export const STUDENT_CLASS_PINS: Record<number, string> = {
+  1: '9511',
+  2: '9522',
+  3: '9533',
+  4: '9544',
+  5: '9555',
+  6: '9566',
+  7: '9577',
+  8: '9588',
+  9: '9599',
+  10: '9510',
+  11: '9511',
+  12: '9512',
+};
+
 export const ROLE_PINS: Record<Role, string> = {
-  student: '9847',
+  student: '9588',
   teacher: '022931',
   admin: '9526',
 };
@@ -225,9 +240,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [watchProgress, setWatchProgress] = useState<WatchProgress[]>(DEMO_WATCH_PROGRESS);
   const [notifications, setNotifications] = useState<NotificationItem[]>(DEMO_NOTIFICATIONS);
 
-  // PIN Authentication method with class level selection
+  // PIN Authentication method with class level & class-wise password selection
   const loginWithPin = (targetRole: Role, pin: string, selectedClassLevel?: number): boolean => {
-    const expectedPin = ROLE_PINS[targetRole];
+    let expectedPin = ROLE_PINS[targetRole];
+    if (targetRole === 'student' && selectedClassLevel) {
+      expectedPin = STUDENT_CLASS_PINS[selectedClassLevel] || '9588';
+    }
+
     if (pin.trim() === expectedPin) {
       setIsAuthenticated(true);
       setCurrentRole(targetRole);

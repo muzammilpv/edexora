@@ -64,7 +64,7 @@ export interface AppContextType {
   setIsPinModalOpen: (open: boolean) => void;
   pendingRoleSwitch: Role | null;
   setPendingRoleSwitch: (role: Role | null) => void;
-  loginWithPin: (targetRole: Role, pin: string) => boolean;
+  loginWithPin: (targetRole: Role, pin: string, classLevel?: number) => boolean;
   logout: () => void;
   requestRoleSwitch: (targetRole: Role) => void;
 
@@ -225,12 +225,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [watchProgress, setWatchProgress] = useState<WatchProgress[]>(DEMO_WATCH_PROGRESS);
   const [notifications, setNotifications] = useState<NotificationItem[]>(DEMO_NOTIFICATIONS);
 
-  // PIN Authentication method
-  const loginWithPin = (targetRole: Role, pin: string): boolean => {
+  // PIN Authentication method with class level selection
+  const loginWithPin = (targetRole: Role, pin: string, selectedClassLevel?: number): boolean => {
     const expectedPin = ROLE_PINS[targetRole];
     if (pin.trim() === expectedPin) {
       setIsAuthenticated(true);
       setCurrentRole(targetRole);
+
+      if (targetRole === 'student' && selectedClassLevel) {
+        setCurrentStudent((prev) => ({
+          ...prev,
+          classLevel: selectedClassLevel,
+        }));
+      }
+
       setPendingRoleSwitch(null);
       setIsPinModalOpen(false);
       setCurrentView('dashboard');

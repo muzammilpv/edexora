@@ -76,16 +76,17 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   const validStudentName = studentName.trim() || 'Muzammil PV';
-  const validClassLevel = classLevel.trim() || 'Class 8 (CBSE)';
-
-  const handleDownload = () => {
+  const validClassLevel = classLevel.trim() || 'Class 8 (CBSE)';  const handleDownload = () => {
     const canvas = document.createElement('canvas');
     canvas.width = 1000;
     canvas.height = 700;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const renderExactInvoice = (logoImg?: HTMLImageElement) => {
+    // Grab the rendered DOM logo <img> element from the modal preview
+    const domLogo = document.querySelector('#printable-invoice img') as HTMLImageElement | null;
+
+    const renderExactInvoice = (logoImg?: HTMLImageElement | null) => {
       // 1. Pure White Background Paper
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -113,20 +114,39 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.lineWidth = 1.5;
       ctx.strokeRect(50, 45, 68, 68);
 
-      if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
-        ctx.save();
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(52, 47, 64, 64, 16);
-          ctx.clip();
+      let logoDrawn = false;
+      if (logoImg && (logoImg.complete || logoImg.naturalWidth > 0)) {
+        try {
+          ctx.save();
+          ctx.beginPath();
+          if (ctx.roundRect) {
+            ctx.roundRect(52, 47, 64, 64, 16);
+            ctx.clip();
+          }
+          ctx.drawImage(logoImg, 52, 47, 64, 64);
+          ctx.restore();
+          logoDrawn = true;
+        } catch (e) {
+          console.warn('Canvas logo draw error, using fallback emblem', e);
         }
-        ctx.drawImage(logoImg, 52, 47, 64, 64);
-        ctx.restore();
-      } else {
-        // Fallback Logo 'E'
+      }
+
+      if (!logoDrawn) {
+        // High Quality Styled Vector EDEXORA Logo Emblem
         ctx.fillStyle = '#0F172A';
-        ctx.font = 'black 36px sans-serif';
-        ctx.fillText('E', 72, 92);
+        ctx.beginPath();
+        ctx.moveTo(84, 58);
+        ctx.lineTo(104, 68);
+        ctx.lineTo(84, 78);
+        ctx.lineTo(64, 68);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#0F172A';
+        ctx.font = 'black 26px sans-serif';
+        ctx.fillText('E', 74, 98);
+        ctx.font = 'black 8px sans-serif';
+        ctx.fillText('EDEXORA', 58, 107);
       }
 
       // Edexora Header Text
@@ -218,7 +238,6 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.fillText('Issued by: EDEXORA Accounts', 620, 276);
 
       // 4. Itemized Table Section
-      // Table Header Text
       ctx.fillStyle = '#64748B';
       ctx.font = 'bold 11px sans-serif';
       ctx.fillText('DESCRIPTION', 50, 335);
@@ -249,7 +268,7 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ctx.font = 'black 24px sans-serif';
       ctx.fillText(`₹${amount.toLocaleString()}`, 830, 380);
 
-      // 5. Total Received Box (Dark Slate #0F172A / slate-950)
+      // 5. Total Received Box (Dark Slate #0F172A)
       ctx.fillStyle = '#0F172A';
       if (ctx.roundRect) {
         ctx.roundRect(50, 440, canvas.width - 100, 85, 20);
@@ -296,22 +315,20 @@ export const InvoiceGeneratorModal: React.FC<Props> = ({ isOpen, onClose }) => {
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = `EDEXORA_Official_Invoice_${studentName.replace(/\s+/g, '_')}_${receiptNumber}.png`;
+      link.download = `EDEXORA_Official_Invoice_${validStudentName.replace(/\s+/g, '_')}_${receiptNumber}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     };
 
-    // Load real logo image onto canvas
-    const img = new window.Image();
-    img.crossOrigin = 'anonymous';
-    img.src = '/edexora-logo.jpg';
-    img.onload = () => {
-      renderExactInvoice(img);
-    };
-    img.onerror = () => {
-      renderExactInvoice();
-    };
+    if (domLogo && (domLogo.complete || domLogo.naturalWidth > 0)) {
+      renderExactInvoice(domLogo);
+    } else {
+      const img = new window.Image();
+      img.src = '/edexora-logo.jpg';
+      img.onload = () => renderExactInvoice(img);
+      img.onerror = () => renderExactInvoice(null);
+    }
   };
 
   const handleReset = () => {
